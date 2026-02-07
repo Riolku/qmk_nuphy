@@ -18,16 +18,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ansi.h"
 #include "side_table.h"
 
-#define SIDE_BRIGHT_MAX     4
-#define SIDE_SPEED_MAX      4
-#define SIDE_COLOUR_MAX     8
+#define SIDE_BRIGHT_MAX 4
+#define SIDE_SPEED_MAX 4
+#define SIDE_COLOUR_MAX 8
 
-#define SIDE_LINE           6
-#define SIDE_LED_NUM        12
+#define SIDE_LINE 6
+#define SIDE_LED_NUM 12
 
-#define RF_LED_LINK_PERIOD  500
-#define RF_LED_PAIR_PERIOD  250
-
+#define RF_LED_LINK_PERIOD 500
+#define RF_LED_PAIR_PERIOD 250
 
 /* side rgb mode */
 enum {
@@ -38,15 +37,15 @@ enum {
     SIDE_OFF,
 };
 
-uint8_t side_mode           = 0;
-uint8_t side_light          = 3;
-uint8_t side_speed          = 2;
-uint8_t side_rgb            = 1;
-uint8_t side_colour         = 0;
-uint8_t side_play_point     = 0;
-uint8_t side_play_cnt       = 0;
-uint32_t side_play_timer    = 0;
-uint8_t r_temp, g_temp, b_temp;
+uint8_t   side_mode       = 0;
+uint8_t   side_light      = 2;
+uint8_t   side_speed      = 2;
+uint8_t   side_rgb        = 1;
+uint8_t   side_colour     = 0;
+uint8_t   side_play_point = 0;
+uint8_t   side_play_cnt   = 0;
+uint32_t  side_play_timer = 0;
+uint8_t   r_temp, g_temp, b_temp;
 rgb_led_t side_leds[SIDE_LED_NUM] = {0};
 
 const uint8_t side_speed_table[5][5] = {
@@ -552,22 +551,26 @@ void rf_led_show(void) {
 /**
  * @brief  bat_num_led.
  */
-void bat_num_led(uint8_t bat_percent)
-{
+void bat_num_led(uint8_t bat_percent) {
     uint8_t r, g, b;
 
     // set color
     if (bat_percent <= 15) {
-        r = 0xff; g = 0x00; b = 0x00;
-    }
-    else if (bat_percent <= 50) {
-        r = 0xff; g = 0x40; b = 0x00;
-    }
-    else if (bat_percent <= 80) {
-        r = 0xff; g = 0xff; b = 0x00;
-    }
-    else {
-        r = 0x00; g = 0xff; b = 0x00;
+        r = 0xff;
+        g = 0x00;
+        b = 0x00;
+    } else if (bat_percent <= 50) {
+        r = 0xff;
+        g = 0x40;
+        b = 0x00;
+    } else if (bat_percent <= 80) {
+        r = 0xff;
+        g = 0xff;
+        b = 0x00;
+    } else {
+        r = 0x00;
+        g = 0xff;
+        b = 0x00;
     }
 
     // set percent
@@ -583,19 +586,16 @@ void bat_num_led(uint8_t bat_percent)
     if (bat_percent > 90) rgb_matrix_set_color(20, r, g, b);
 }
 
-void num_led_show(void)
-{
-    static uint8_t num_bat_temp         = 0;
-    num_bat_temp         = dev_info.rf_baterry;
+void num_led_show(void) {
+    static uint8_t num_bat_temp = 0;
+    num_bat_temp                = dev_info.rf_baterry;
     bat_num_led(num_bat_temp);
 }
 
-void bat_led_close(void)
-{
-    for(int i=20; i<=29; i++) {
-        rgb_matrix_set_color(i,0,0,0);
+void bat_led_close(void) {
+    for (int i = 20; i <= 29; i++) {
+        rgb_matrix_set_color(i, 0, 0, 0);
     }
-
 }
 
 /**
@@ -605,27 +605,15 @@ void bat_percent_led(uint8_t bat_percent) {
     uint8_t bat_end_led = 0;
     uint8_t bat_r, bat_g, bat_b;
 
-    if (bat_percent <= 15) {
-        bat_end_led = 0;
+    if (bat_percent < 30) {
         bat_r = 0x80, bat_g = 0, bat_b = 0;
-    } else if (bat_percent <= 20) {
-        bat_end_led = 1;
+        bat_end_led = bat_percent / 5;
+    } else if (bat_percent < 60) {
         bat_r = 0x80, bat_g = 0x40, bat_b = 0;
-    } else if (bat_percent <= 40) {
-        bat_end_led = 2;
-        bat_r = 0x80, bat_g = 0x40, bat_b = 0;
-    } else if (bat_percent <= 60) {
-        bat_end_led = 3;
-        bat_r = 0x80, bat_g = 0x40, bat_b = 0;
-    } else if (bat_percent <= 80) {
-        bat_end_led = 4;
-        bat_r = 0x80, bat_g = 0x40, bat_b = 0;
-    } else if (bat_percent <= 95) {
-        bat_end_led = 5;
-        bat_r = 0x80, bat_g = 0x40, bat_b = 0;
+        bat_end_led = (bat_percent - 30) / 5;
     } else {
-        bat_end_led = 5;
         bat_r = 0, bat_g = 0x80, bat_b = 0;
+        bat_end_led = (bat_percent - 60) / 7;
     }
 
     uint8_t i = 0;
@@ -715,7 +703,6 @@ void bat_led_show(void) {
  * @brief  device_reset_show.
  */
 void device_reset_show(void) {
-
     writePinHigh(DC_BOOST_PIN);
     setPinOutput(DRIVER_SIDE_CS_PIN);
     setPinOutput(DRIVER_LED_CS_PIN);
@@ -772,9 +759,8 @@ void device_reset_init(void) {
 
 /**
  *      RGB test
-*/
-void rgb_test_show(void)
-{
+ */
+void rgb_test_show(void) {
     // open power control
     writePinHigh(DC_BOOST_PIN);
     setPinOutput(DRIVER_LED_CS_PIN);
